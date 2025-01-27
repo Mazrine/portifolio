@@ -14,5 +14,6 @@ export default {
       },
     },
   },
+  darkMode: "class", // Enables manual theme toggling
   plugins: [],
 } satisfies Config;

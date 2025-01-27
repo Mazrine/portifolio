@@ -1,21 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: linear-gradient(135deg, #f5f0ff, #a064ee);
+  --foreground: #2d1b5a;
+  --font-family: 'Chakra Petch', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark-purple {
+  --background: linear-gradient(135deg, #14002d, #28183f);
+  --foreground: #d4b3ff;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-attachment: fixed;
+  font-family: var(--font-family);
+  transition: background 0.5s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Granular Noise Effect */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 1;
+  mix-blend-mode: overlay;
+  z-index: 1;
 }
