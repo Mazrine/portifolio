@@ -1,30 +1,51 @@
-import { useState } from "react";
-import { useTheme } from "@/context/ThemeContext";
+import { useState, ReactNode } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Portrait() {
-  const { theme } = useTheme();
-  const [isVisible, setIsVisible] = useState(true);
+interface PortraitProps {
+  id: string; // Unique identifier for each Portrait component
+  text: string; // Text to display (e.g., "me.jpg")
+  imageSrc?: string; // Optional image source
+  altText?: string; // Optional alt text for the image
+  nested?: ReactNode; // Optional nested elements (e.g., divs or other elements)
+}
+
+export default function Portrait({
+  id,
+  text,
+  imageSrc,
+  altText,
+  nested,
+}: PortraitProps) {
+  const [isVisible, setIsVisible] = useState(true); // Controls whether the content is visible
+  const [isComponentVisible, setIsComponentVisible] = useState(true); // Controls whether the entire component is visible
 
   const handleClose = () => {
-    setIsVisible(false);
+    if (isVisible) {
+      // First click: Hide the image/nested content
+      setIsVisible(false);
+    } else {
+      // Second click: Hide the entire component
+      setIsComponentVisible(false);
+    }
   };
 
   return (
     <AnimatePresence mode="wait">
-      {isVisible ? (
+      {isComponentVisible && (
         <motion.div
-          key="portrait"
-          className="flex flex-col bg-[#a064ee] p-1 gap-1 shadow-xl shadow-purple-900/50 rounded-sm border border-[#2d1b5a]"
-          initial={{ opacity: 1, x: 0 }} // Start at original position
-          exit={{ opacity: 0, x: 50 }} // Move right (x: 100) while fading and scaling
-          transition={{ duration: 0.3, ease: "easeInOut" }} // Smooth transition
+          drag
+          key={`portrait-${id}`} // Unique key for each Portrait component
+          className="absolute flex flex-col bg-[#a064ee] p-1 gap-1 shadow-xl shadow-purple-900/50 rounded-sm border border-[#2d1b5a]"
+          initial={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 50 }} // Fade away to the right
+          transition={{ duration: 0.3, ease: "easeInOut" }}
         >
+          {/* Header */}
           <div className="bg-[#d4b3ff] w-full p-1 rounded-sm flex flex-row gap-2 align-center items-center justify-between border border-[#2d1b5a]">
             <div className="flex flex-row gap-2 align-center items-center justify-between">
               <div className="w-4 h-4 rounded-sm bg-[#2d1b5a]"></div>
-              <span className="text-[#2d1b5a]">me.jpg</span>
+              <span className="text-[#2d1b5a]">{text}</span>
             </div>
             <div className="flex flex-row gap-2 align-center items-center justify-between">
               <div className="text-[#2d1b5a] hover:text-purple-500 hover:border-purple-500 transition-colors cursor-pointer border border-[#2d1b5a] rounded-sm p-[2px]">
@@ -74,29 +95,43 @@ export default function Portrait() {
               </div>
             </div>
           </div>
-          <Image
-            className="rounded-sm border border-[#2d1b5a]"
-            src="/me.jpg"
-            alt="Mazrine"
-            width={300}
-            height={76}
-            priority
-          />
+
+          {/* Content (Image or Nested Content) */}
+          <AnimatePresence mode="wait">
+            {isVisible ? (
+              imageSrc ? (
+                <Image
+                  className="rounded-sm border border-[#2d1b5a]"
+                  src={imageSrc}
+                  alt={altText || "Portrait"}
+                  width={300}
+                  height={76}
+                  priority
+                />
+              ) : (
+                nested // Render nested content if no image is provided
+              )
+            ) : (
+              <motion.div
+                key={`close-state-${id}`} // Unique key for each close state
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center justify-center h-[76px]"
+              >
+                ( ✖ ︿ ✖ )
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Footer */}
           <div className="flex flex-row gap-2 align-center items-center justify-start">
             <div className="w-8 h-2 rounded-sm bg-[#d4b3ff] border border-[#2d1b5a]" />
             <div className="w-2 h-2 rounded-sm bg-[#d4b3ff] border border-[#2d1b5a]" />
             <div className="w-2 h-2 rounded-sm bg-[#d4b3ff] border border-[#2d1b5a]" />
             <div className="w-2 h-2 rounded-sm bg-[#d4b3ff] border border-[#2d1b5a]" />
           </div>
-        </motion.div>
-      ) : (
-        <motion.div
-          key="close-state"
-          initial={{ opacity: 0, scale: 1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2 }}
-        >
-          ( ✖ ︿ ✖ )
         </motion.div>
       )}
     </AnimatePresence>

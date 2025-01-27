@@ -2,12 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Portrait from "@/components/Portrait";
 import { useTheme } from "@/context/ThemeContext";
+import { useState } from "react";
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
+  const [showPortrait, setShowPortrait] = useState(false);
+  const [showAscii, setShowAscii] = useState(false);
 
   return (
     <div className="grid grid-rows-[auto_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
@@ -157,11 +160,69 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start w-full">
-        <div className="flex flex-row gap-2 justify-center items-center w-full">
-          <span>a</span>
-          <Portrait />
-        </div>
+      <main className="flex flex-row gap-8 justify-between row-start-2 items-center sm:items-start w-full">
+        
+          <div className="min-w-[20%] max-w-[20%] grid">
+            <div
+              className="flex flex-col justify-center items-center"
+              onClick={() => setShowPortrait(!showPortrait)}
+            >
+              <Image
+                className="rounded-sm border border-[#2d1b5a]"
+                src="/me.jpg"
+                alt="Mazrine"
+                width={50}
+                height={76}
+                priority
+              />
+              <span>me.jpg</span>
+            </div>
+            <div
+              className="flex flex-col justify-center items-center"
+              onClick={() => setShowAscii(!showAscii)}
+            >
+              <Image
+                className="rounded-sm border border-[#2d1b5a]"
+                src="/ascii-me.png"
+                alt="Mazrine"
+                width={50}
+                height={76}
+                priority
+              />
+              <span>also-me.png</span>
+            </div>
+          </div>
+
+          <AnimatePresence>
+            <div className="grid gap-1"></div>
+            {showPortrait && (
+              <motion.div
+                initial={{ opacity: 0, x: -50 }} // Start off-screen to the left
+                animate={{ opacity: 1, x: 0 }} // Animate to original position
+                exit={{ opacity: 0, x: 50 }} // Move right while fading out
+                transition={{ duration: 0.3, ease: "easeInOut" }} // Smooth transition
+              >
+                <Portrait id="portrait-1" text="me.jpg" imageSrc="/me.jpg" altText="Mazrine" />
+              </motion.div>
+            )}
+            {showAscii && (
+              <motion.div
+                initial={{ opacity: 0, x: -50 }} // Start off-screen to the left
+                animate={{ opacity: 1, x: 0 }} // Animate to original position
+                exit={{ opacity: 0, x: 50 }} // Move right while fading out
+                transition={{ duration: 0.3, ease: "easeInOut" }} // Smooth transition
+              >
+                <Portrait
+                id="portrait-2"
+                  text="ascii-me.png"
+                  imageSrc="/ascii-me.png"
+                  altText="Mazrine"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div className="min-w-[20%] max-w-[20%]"></div>
+        
 
         {/* <div className="flex gap-2">
           <motion.div
